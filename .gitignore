@@ -1,0 +1,12 @@
+*.exe
+*.o
+builds/*
+doc/doxy/*
+nbproject
+obj
+bin/*
+lib*
+cmake/*
+trash/*
+.vscode
+Makefile
