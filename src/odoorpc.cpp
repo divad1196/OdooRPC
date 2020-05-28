@@ -195,7 +195,8 @@ int _jsonrpc(
     curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, method);
     curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
     curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, write_call_back);
-    curl_easy_setopt(hnd, CURLOPT_WRITEDATA, call_back_data); 
+    curl_easy_setopt(hnd, CURLOPT_WRITEDATA, call_back_data);
+    curl_easy_setopt(hnd, CURLOPT_FOLLOWLOCATION, 1L); 
 
     // Perform
     ret = curl_easy_perform(hnd);
