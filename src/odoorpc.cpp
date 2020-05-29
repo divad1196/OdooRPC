@@ -23,7 +23,7 @@ OdooRPC::OdooRPC(
     const Credentials& credentials):    _url(url),
                                         _db(database),
                                         _creds(credentials) {
-    
+
     autenticate();
 }
 
@@ -74,12 +74,16 @@ std::string OdooRPC::raw_query(
                 "%s",
                 "%s",
                 "%s",
-                "%s",
+                "%s"
                 %s
             ]
         }
     })";
-    std::string arguments_string = joinStrings(arguments, ",");
+    std::string arguments_string;
+    for(const std::string& str: arguments) {
+        arguments_string += "," + str;
+    }
+
     size_t body_size =
         sizeof(BODY_TEMPLATE)       +
         _db.size()                  +
@@ -196,7 +200,7 @@ int _jsonrpc(
     curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
     curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, write_call_back);
     curl_easy_setopt(hnd, CURLOPT_WRITEDATA, call_back_data);
-    curl_easy_setopt(hnd, CURLOPT_FOLLOWLOCATION, 1L); 
+    curl_easy_setopt(hnd, CURLOPT_FOLLOWLOCATION, 1L);
 
     // Perform
     ret = curl_easy_perform(hnd);
