@@ -7,6 +7,7 @@
 typedef size_t (*WriteCallback) (void*, size_t, size_t, void*);
 
 std::string joinStrings(const std::vector<std::string>& string_list, const std::string& join);
+size_t findUid(const std::string& authentication_values);
 
 int _jsonrpc(
     const char* url,
@@ -150,7 +151,7 @@ void OdooRPC::autenticate() {
         body
     );
 
-    // TODO: Handle response_body to set _uid value
+    forceUid(findUid(response_body));
 
     delete[] body;
 }
@@ -171,6 +172,15 @@ std::string joinStrings(const std::vector<std::string>& string_list, const std::
     }
     return result;
 }
+
+
+size_t findUid(const std::string& authentication_values) {
+    // Avoid using json lib,
+    // Will be change if the library starts using json parser
+    size_t start_index = authentication_values.find(R"("uid":)") + 6;
+    return std::atol(authentication_values.c_str() + start_index);
+}
+
 
 int _jsonrpc(
     const char* url,
