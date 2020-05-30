@@ -15,14 +15,20 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 FIND_PACKAGE(CURL)
 IF(CURL_FOUND)
   INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIR})
+  set(CURL_LIBRARY "-lcurl") 
 ELSE(CURL_FOUND)
   MESSAGE(FATAL_ERROR "Could not find the CURL library and development files.")
 ENDIF(CURL_FOUND)
 
-add_executable(
-    odoorpc
-    main.cpp
-    src/credentials.h src/credentials.cpp
-    src/odoorpc.h src/odoorpc.cpp
+ADD_LIBRARY(odoorpc
+  src/credentials.h src/credentials.cpp
+  src/odoorpc.h src/odoorpc.cpp
 )
-target_link_libraries(odoorpc "-lcurl")
+target_link_libraries(odoorpc ${CURL_LIBRARY})
+
+
+add_executable(
+    client
+    main.cpp
+)
+target_link_libraries(client odoorpc)
