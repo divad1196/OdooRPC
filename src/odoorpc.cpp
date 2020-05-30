@@ -1,6 +1,7 @@
 #include "odoorpc.h"
 #include <curl/curl.h>
 #include <string>
+#include <cstring>
 
 
 typedef size_t (*WriteCallback) (void*, size_t, size_t, void*);
@@ -85,10 +86,12 @@ std::string OdooRPC::raw_query(
     }
 
     size_t body_size =
-        sizeof(BODY_TEMPLATE)       +
+        strlen(BODY_TEMPLATE)       +
         _db.size()                  +
-        _creds.getLogin().size()    +
+        _uid.size()                 +
         _creds.getPassword().size() +
+        model.size()                +
+        method.size()               +
         arguments_string.size();
 
     char* body = new char[body_size];
@@ -127,7 +130,7 @@ void OdooRPC::autenticate() {
     })";
 
     size_t body_size =
-        sizeof(BODY_TEMPLATE)       +
+        strlen(BODY_TEMPLATE)       +
         _db.size()                  +
         _creds.getLogin().size()    +
         _creds.getPassword().size();
