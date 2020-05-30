@@ -13,17 +13,17 @@
 
 ### future developments
 
-I will look forward to add some features as:
+>  I will look forward to add some features as:
+>
+> * shortcuts fonctions (create, search, write, ...)
+> * Add Model class to wrap _name and ids
+>
+> Support for json will probably never be added. Any third-party library can wrap this library outputs.
+> On the other hand, another library wrapping this one might appear.
 
-* shortcuts fonctions (create, search, write, ...)
-* Add Model class to wrap _name and ids
-
-
-
-Support for json will probably never be added. Any third-party library can wrap this library outputs.
-On the other hand, another library wrapping this one might appear.
-
-
+Taking a step back, this won't be implemented in this library.
+This will stay as minimal as possible to avoid becoming opinionated.
+Another library will be created based on this one for higher level use
 
 ### Use
 
@@ -57,10 +57,9 @@ On the other hand, another library wrapping this one might appear.
    );
    ```
 
-   This will automatically authenticate the user and retrieve it's uid.
+   This will automatically authenticate the user and retrieve it's uid which is needed for most of the queries.
    The uid is related to the database, it is stored into the RPC client.
-   It can be force using **forceUid**, and currently, this is the only way to use the librairy.
-
+   
 2. use **raw_query** method
 
    This will return the request body as a string.
@@ -82,10 +81,10 @@ On the other hand, another library wrapping this one might appear.
        "res.partner",
        "search_read",
        {
-           "[]", 						// domain
-           R"(["name", "user_id"])", 	// fields
-           0, 							// offset
-           5 							// limit
+           "[]",                        // domain
+           R"(["name", "user_id"])",    // fields
+           0,                           // offset
+           5                            // limit
        }
    ) << std::endl;
    ```
