@@ -13,17 +13,8 @@
 
 ### future developments
 
->  I will look forward to add some features as:
->
-> * shortcuts fonctions (create, search, write, ...)
-> * Add Model class to wrap _name and ids
->
-> Support for json will probably never be added. Any third-party library can wrap this library outputs.
-> On the other hand, another library wrapping this one might appear.
-
-Taking a step back, this won't be implemented in this library.
-This will stay as minimal as possible to avoid becoming opinionated.
-Another library will be created based on this one for higher level use
+Only fix will be done here.
+For higher level library, see: [OdooCpp](https://github.com/divad1196/OdooCpp) which use this library and some other as  [nlohmann/json](https://github.com/nlohmann/json/).
 
 ### Use
 
