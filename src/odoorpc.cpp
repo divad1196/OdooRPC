@@ -62,7 +62,7 @@ std::string OdooRPC::raw_query(
     const std::string& model,
     const std::string& method,
     const std::vector<std::string>& arguments
-) {
+) const {
 
     const char BODY_TEMPLATE[] = R"({
         "jsonrpc": "2.0",

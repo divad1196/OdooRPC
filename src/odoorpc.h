@@ -44,7 +44,7 @@ class OdooRPC {
             const std::string& model,
             const std::string& method,
             const std::vector<std::string>& arguments
-        );
+        ) const;
 
         /**
          * @param uid id of the user in the database
