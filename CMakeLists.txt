@@ -32,3 +32,9 @@ add_executable(
     main.cpp
 )
 target_link_libraries(client odoorpc)
+
+add_executable(
+    jsonrpc
+    main2.cpp
+)
+target_link_libraries(jsonrpc odoorpc)

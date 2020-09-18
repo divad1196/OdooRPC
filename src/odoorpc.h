@@ -2,6 +2,7 @@
 #define ODOO_ODOORPC_H
 
 #include "credentials.h"
+#include <curl/curl.h>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,8 @@ class OdooRPC {
             const Credentials& credentials
         );
 
+        ~OdooRPC();
+
         /**
          * @param route Odoo model on which to query
          * @param http_method The http method to use
@@ -31,7 +34,7 @@ class OdooRPC {
             const std::string& route,
             const std::string& http_method,
             const std::string& body
-        ) const;
+        );
 
         /**
          * @param model Odoo model on which to query
@@ -44,7 +47,13 @@ class OdooRPC {
             const std::string& model,
             const std::string& method,
             const std::vector<std::string>& arguments
-        ) const;
+        );
+
+        std::string jsonrpc(
+            const std::string& route="/",
+            const std::string& data="{}",
+            const std::string& method="POST"
+        );
 
         /**
          * @param uid id of the user in the database
@@ -64,10 +73,22 @@ class OdooRPC {
         void autenticate();
 
     private:
+
+        typedef size_t (*WriteCallback) (void*, size_t, size_t, void*);
+        int _jsonrpc(
+            const char* url,
+            const char* method,
+            const char* body,
+            size_t body_size,
+            WriteCallback write_call_back,
+            void* call_back_data
+        );
+
         std::string _url;
         std::string _db;
         std::string _uid;
         Credentials _creds;
+        CURL* hnd;
 
         static size_t _retrieve_data(void *buffer, size_t size, size_t nmemb, void* std_string);
 };

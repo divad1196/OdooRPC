@@ -4,19 +4,9 @@
 #include <cstring>
 
 
-typedef size_t (*WriteCallback) (void*, size_t, size_t, void*);
 
 std::string joinStrings(const std::vector<std::string>& string_list, const std::string& join);
 size_t findUid(const std::string& authentication_values);
-
-int _jsonrpc(
-    const char* url,
-    const char* method,
-    const char* body,
-    size_t body_size,
-    WriteCallback write_call_back,
-    void* call_back_data
-);
 
 
 OdooRPC::OdooRPC(
@@ -24,11 +14,14 @@ OdooRPC::OdooRPC(
     const std::string& database,
     const Credentials& credentials):    _url(url),
                                         _db(database),
-                                        _creds(credentials) {
-
+                                        _creds(credentials),
+                                        hnd(curl_easy_init()) {
     autenticate();
 }
 
+OdooRPC::~OdooRPC() {
+    curl_easy_cleanup(hnd);
+}
 
 void OdooRPC::forceUid(size_t uid) {
     _uid = std::to_string(uid);
@@ -44,7 +37,7 @@ std::string OdooRPC::raw_jsonrpc(
     const std::string& route,
     const std::string& http_method,
     const std::string& body
-) const {
+) {
     std::string content;
     _jsonrpc(
         (_url + route).c_str(),
@@ -62,7 +55,7 @@ std::string OdooRPC::raw_query(
     const std::string& model,
     const std::string& method,
     const std::vector<std::string>& arguments
-) const {
+) {
 
     const char BODY_TEMPLATE[] = R"({
         "jsonrpc": "2.0",
@@ -156,6 +149,36 @@ void OdooRPC::autenticate() {
     delete[] body;
 }
 
+std::string OdooRPC::jsonrpc(
+    const std::string& route,
+    const std::string& data,
+    const std::string& method
+) {
+
+    const char BODY_TEMPLATE[] = R"({
+        "jsonrpc": "2.0",
+        "id": null,
+        "method": "call",
+        "params": %s
+    })";
+
+    size_t body_size = strlen(BODY_TEMPLATE) + data.size();
+
+    char* body = new char[body_size];
+    sprintf(
+        body, BODY_TEMPLATE,
+        data.c_str()
+    );
+
+    std::string response_body = raw_jsonrpc(
+        route.c_str(),
+        method.c_str(),
+        body
+    );
+    
+    return response_body;
+}
+
 size_t OdooRPC::_retrieve_data(void *buffer, size_t size, size_t nmemb, void* std_string) {
     static_cast<std::string*>(std_string)->append((char*)buffer, size * nmemb);
     return size * nmemb;
@@ -182,7 +205,7 @@ size_t findUid(const std::string& authentication_values) {
 }
 
 
-int _jsonrpc(
+int OdooRPC::_jsonrpc(
     const char* url,
     const char* method,
     const char* body,
@@ -192,10 +215,8 @@ int _jsonrpc(
 ) {
     // Declarations
     CURLcode ret;
-    CURL* hnd;
     struct curl_slist* slist1;
     slist1 = NULL;
-    hnd = curl_easy_init();
 
     // Configurations
     slist1 = curl_slist_append(slist1, "Content-Type: application/json");
@@ -215,11 +236,13 @@ int _jsonrpc(
     curl_easy_setopt(hnd, CURLOPT_WRITEDATA, call_back_data);
     curl_easy_setopt(hnd, CURLOPT_FOLLOWLOCATION, 1L);
 
+    curl_easy_setopt(hnd, CURLOPT_COOKIEFILE, "");
+    // curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);
+
     // Perform
     ret = curl_easy_perform(hnd);
 
     // Free
-    curl_easy_cleanup(hnd);
     curl_slist_free_all(slist1);
 
     return (int)ret;
