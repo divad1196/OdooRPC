@@ -53,7 +53,7 @@ common() {
 
 # Ok, use the uid instead of login
 raw_query() {
-    user_id=$(authenticate $2 $3 $4)
+    user_id=$(authenticate $1 $2 $3 $4)
     echo $user_id
     data="{
         \"jsonrpc\": \"2.0\",
